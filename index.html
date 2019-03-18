@@ -3,21 +3,19 @@
 
 <head>
   <title>Udacity Todos Goals</title>
-  <script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js'></script>
+  <script src='https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js'></script>
+  <script src='https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js'></script>
+  <script src='https://unpkg.com/babel-standalone@6.15.0/babel.min.js'></script>
 </head>
 
 <body>
-
   <div>
     <h1>Todo List</h1>
     <input id='todo' type='text' placeholder='Add Todo' />
     <button id='todoBtn'>Add Todo</button>
     <ul id='todos'></ul>
   </div>
-
   <div>
     <h1>Goals</h1>
     <input id='goal' type='text' placeholder='Add Goal' />
@@ -93,10 +91,33 @@
           return state
       }
     }
+    const checker = (store) => (next) => (action) => {
+      if (
+        action.type === ADD_TODO &&
+        action.todo.name.toLowerCase().includes('bitcoin')
+      ) {
+        return alert("Nope. That's a bad idea.")
+      }
+      if (
+        action.type === ADD_GOAL &&
+        action.goal.name.toLowerCase().includes('bitcoin')
+      ) {
+        return alert("Nope. That's a bad idea.")
+      }
+      return next(action)
+    }
+    const logger = (store) => (next) => (action) => {
+      console.group(action.type)
+      console.log('The action: ', action)
+      const result = next(action)
+      console.log('The new state: ', store.getState())
+      console.groupEnd()
+      return result
+    }
     const store = Redux.createStore(Redux.combineReducers({
       todos,
       goals,
-    }))
+    }), Redux.applyMiddleware(checker, logger))
     store.subscribe(() => {
       const { goals, todos } = store.getState()
       document.getElementById('goals').innerHTML = ''
@@ -105,6 +126,7 @@
       todos.forEach(addTodoToDOM)
     })
 
+    
     // DOM code
     function addTodo() {
       const input = document.getElementById('todo')
@@ -129,7 +151,6 @@
       .addEventListener('click', addTodo)
     document.getElementById('goalBtn')
       .addEventListener('click', addGoal)
-
     function createRemoveButton(onClick) {
       const removeBtn = document.createElement('button')
       removeBtn.innerHTML = 'X'
@@ -168,33 +189,30 @@
     function List (props) {
       return (
         <ul>
-          <li>List</li>
+          <li>LIST</li>
         </ul>
       )
     }
-
     class Todos extends React.Component {
       render() {
         return (
           <div>
-            Todos
+            TODOS
             <List />
           </div>
         )
       }
     }
-
     class Goals extends React.Component {
       render() {
         return (
           <div>
-            Goals
+            GOALS
             <List />
           </div>
         )
       }
     }
-
     class App extends React.Component {
       render() {
         return (
@@ -205,11 +223,9 @@
         )
       }
     }
-
     ReactDOM.render(
-      <App />, 
-      document.getElementById('app');
-
+      <App />,
+      document.getElementById('app')
     )
   </script>
 </body>
