@@ -78,6 +78,32 @@
       }
     }
 
+    function handleAddGoal(name, cb) { //cb is a callback function
+      return (dispatch) => {
+        return API.saveGoal(name)
+          .then((goal) => {
+            this.props.store.dispatch(addGoalAction(goal))
+            cb()
+          })
+          .catch(() => {
+            alert('There was an error. Try again.')
+          })
+      }
+    }
+
+    function handleDeleteGoal(goal) {
+      return (dispatch) => {
+        dispatch(removeGoalAction(goal.id))
+
+      return API.deleteGoal(goal.id)
+        .catch(() => {
+          this.props.store.dispatch(addGoalAction(goal.id))
+          alert('An error occured. Try again.')
+        })}
+    }
+
+    // REDUCERS
+
     function todos(state = [], action) {
       switch (action.type) {
         case ADD_TODO:
@@ -228,25 +254,15 @@
 
       addItem = (e) => {
         e.preventDefault()
-
-        return API.saveGoal(this.input.value)
-          .then((goal) => {
-            this.props.store.dispatch(addGoalAction(goal))
-            this.input.value = ''
-          })
-          .catch(() => {
-            alert('There was an error. Try again.')
-          })
+        this.props.store.dispatch(handleAddGoal(
+          this.input.value,
+          () => this.input.value = ''
+        ))
       }
 
       removeItem = (goal) => {
-        this.props.store.dispatch(removeGoalAction(goal.id))
-
-        return API.deleteGoal(goal.id) 
-          .catch(() => {
-            this.props.store.dispatch(addGoalAction(goal.id))
-            alert('An error occured. Try again.')  
-          })
+        this.props.store.dispatch(handleDeleteGoal(goal))
+        
       }
 
       render() {
