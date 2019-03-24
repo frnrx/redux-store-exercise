@@ -2,9 +2,9 @@ import React from 'react';
 import ConnectedTodos from './Todos'
 import ConnectedGoals from './Goals'
 import { connect } from 'react-redux'
-import { 
-  handleInitialData
-} from '../actions/shared'
+import { handleInitialData } from '../actions/shared'
+import Todos from './Todos'
+import Goals from './Goals'
 
 class App extends React.Component {
 
@@ -24,13 +24,6 @@ class App extends React.Component {
       <div>
         <ConnectedTodos />
         <ConnectedGoals />
-      </div>
-    )
-
-    return (
-      <div>
-        <Todos todos={todos} store={this.props.store} />
-        <Goals goals={goals} store={this.props.store} />
       </div>
     )
   }
